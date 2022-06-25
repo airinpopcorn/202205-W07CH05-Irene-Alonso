@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import mongoose from 'mongoose';
+import { mongooseConnect } from '../db/mongoose.js';
 
 export interface iRobot {
     id: number;
@@ -20,3 +21,5 @@ const robotSchema = new mongoose.Schema({
 });
 
 export const Robot = mongoose.model('Robot', robotSchema);
+
+await mongooseConnect();
