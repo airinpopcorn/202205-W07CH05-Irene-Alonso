@@ -41,7 +41,6 @@ export class RobotController<T> {
         try {
             const newItem = await this.model.create(req.body);
             resp.setHeader('Content-type', 'application/json');
-            resp.status(201);
             resp.end(JSON.stringify(newItem));
         } catch (error) {
             next(error);
@@ -57,14 +56,12 @@ export class RobotController<T> {
             if (req.params.id.length !== 24) {
                 throw new URIError('ID length not valid');
             }
-            const speed = (JSON.parse(req.body) as Partial<iRobot>)
-                .speed as number;
-            if (speed > 10 || speed < 0) {
+            const speed = (req.body as Partial<iRobot>).speed as number;
+            if (speed && (speed > 10 || speed < 0)) {
                 throw new RangeError('Speed must be between 0 and 10');
             }
-            const life = (JSON.parse(req.body) as Partial<iRobot>)
-                .life as number;
-            if (life > 10 || life < 10) {
+            const life = (req.body as Partial<iRobot>).life as number;
+            if (life && (life > 10 || life < 10)) {
                 throw new RangeError('Life must be between 0 and 10');
             }
             const newItem = await this.model.findByIdAndUpdate(

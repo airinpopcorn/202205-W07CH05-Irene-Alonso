@@ -6,11 +6,11 @@ describe('Given a function', () => {
     let controller: RobotController<{}>;
     let req: Partial<Request>;
     let resp: Partial<Response>;
-    let next: NextFunction = jest.fn();
+    let next: NextFunction;
 
     beforeEach(() => {
         req = {
-            params: { id: '1' },
+            params: { id: '62b6d5190a49db557b219d9d' },
             body: {},
         };
         resp = {
@@ -42,7 +42,7 @@ describe('Given a function', () => {
     });
 
     describe('When we call getController', () => {
-        test('Then the resp.end should be called', async () => {
+        test('Then the resp.end should be called and return mockResult', async () => {
             let mockResult = {
                 name: 'test',
             };
@@ -59,14 +59,27 @@ describe('Given a function', () => {
         });
     });
     describe('When we call getController with a wrong id', () => {
-        test('Then the resp.end should be called with a 404', async () => {
+        test('Then next should be called with an error', async () => {
+            next = jest.fn();
             (mockModel.findById as jest.Mock).mockResolvedValue(null);
             await controller.getController(
                 req as Request,
                 resp as Response,
                 next as NextFunction
             );
-            expect(resp.status).toHaveBeenCalledWith(404);
+            expect(next).toBeCalled();
+        });
+        test('Then next should throw a 400 error ', async () => {
+            next = jest.fn();
+            req = {
+                params: { id: '62b5d4943bc55ff01' },
+            };
+            await controller.getController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toBeCalledWith(expect.any(URIError));
         });
     });
     describe('When we call postController', () => {
@@ -83,7 +96,16 @@ describe('Given a function', () => {
             expect(resp.end).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockNewItem));
-            expect(resp.status).toHaveBeenCalledWith(201);
+        });
+        test('Then the next function should be called', async () => {
+            next = jest.fn();
+            (mockModel.create as jest.Mock).mockRejectedValue(null);
+            await controller.postController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toHaveBeenCalledWith(null);
         });
     });
     describe('When we call patchController', () => {
@@ -101,6 +123,44 @@ describe('Given a function', () => {
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
         });
+        test('Then it should throw an error if we pass a wrong id', async () => {
+            next = jest.fn();
+            req = {
+                params: { id: '943bc55ff0124f6c1d' },
+            };
+            await controller.patchController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toBeCalled();
+        });
+        test('Then next should be called with an error if we pass wrong speed range', async () => {
+            next = jest.fn();
+            req = {
+                params: { id: '62b6d5190a49db557b219d9d' },
+                body: { speed: -43 },
+            };
+            await controller.patchController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toBeCalledWith(expect.any(RangeError));
+        });
+        test('Then next should be called with an error if we pass wrong life range', async () => {
+            next = jest.fn();
+            req = {
+                params: { id: '62b6d5190a49db557b219d9d' },
+                body: { life: -4 },
+            };
+            await controller.patchController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toBeCalledWith(expect.any(RangeError));
+        });
     });
     describe('When we call deleteController', () => {
         test('Then the resp.end should be called', async () => {
@@ -111,6 +171,19 @@ describe('Given a function', () => {
                 next as NextFunction
             );
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify({}));
+        });
+        test('Then next should be called with a worng length id', async () => {
+            next = jest.fn();
+            req = {
+                params: { id: '943bc55ff0124f6c1d' },
+            };
+
+            await controller.deleteController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toBeCalled();
         });
     });
 });
