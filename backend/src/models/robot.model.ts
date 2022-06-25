@@ -12,8 +12,7 @@ export interface iRobot {
 }
 
 const robotSchema = new mongoose.Schema({
-    id: Number,
-    name: String,
+    name: { type: String, required: true },
     image: String,
     speed: { type: Number, min: 0, max: 10 },
     life: { type: Number, min: 0, max: 10 },

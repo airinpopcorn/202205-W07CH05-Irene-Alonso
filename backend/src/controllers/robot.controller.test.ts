@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { RobotController } from './robot.controller';
 
@@ -6,6 +6,7 @@ describe('Given a function', () => {
     let controller: RobotController<{}>;
     let req: Partial<Request>;
     let resp: Partial<Response>;
+    let next: NextFunction = jest.fn();
 
     beforeEach(() => {
         req = {
@@ -47,7 +48,11 @@ describe('Given a function', () => {
             };
             (mockModel.findById as jest.Mock).mockResolvedValue(mockResult);
 
-            await controller.getController(req as Request, resp as Response);
+            await controller.getController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(resp.end).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
@@ -56,7 +61,11 @@ describe('Given a function', () => {
     describe('When we call getController with a wrong id', () => {
         test('Then the resp.end should be called with a 404', async () => {
             (mockModel.findById as jest.Mock).mockResolvedValue(null);
-            await controller.getController(req as Request, resp as Response);
+            await controller.getController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(resp.status).toHaveBeenCalledWith(404);
         });
     });
@@ -66,7 +75,11 @@ describe('Given a function', () => {
                 name: 'test',
             };
             (mockModel.create as jest.Mock).mockResolvedValue(mockNewItem);
-            await controller.postController(req as Request, resp as Response);
+            await controller.postController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(resp.end).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockNewItem));
@@ -79,7 +92,11 @@ describe('Given a function', () => {
             (mockModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(
                 mockResult
             );
-            await controller.patchController(req as Request, resp as Response);
+            await controller.patchController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(resp.end).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
@@ -88,7 +105,11 @@ describe('Given a function', () => {
     describe('When we call deleteController', () => {
         test('Then the resp.end should be called', async () => {
             (mockModel.findByIdAndDelete as jest.Mock).mockResolvedValue({});
-            await controller.deleteController(req as Request, resp as Response);
+            await controller.deleteController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify({}));
         });
     });
