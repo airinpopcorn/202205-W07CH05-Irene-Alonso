@@ -6,7 +6,7 @@ export interface iRobot {
     name: string;
     image: string;
     speed: number;
-    life: boolean;
+    life: number;
     dateEst: string;
 }
 

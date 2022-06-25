@@ -11,4 +11,4 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/', homeRouter);
-app.use('/task', robotRouter);
+app.use('/robots', robotRouter);
