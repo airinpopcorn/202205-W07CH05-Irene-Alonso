@@ -10,7 +10,7 @@ describe('Given a function', () => {
 
     beforeEach(() => {
         req = {
-            params: { id: '1' },
+            params: { id: '62b6d5190a49db557b219d9d' },
             body: {},
         };
         resp = {
@@ -42,7 +42,7 @@ describe('Given a function', () => {
     });
 
     describe('When we call getController', () => {
-        test('Then the resp.end should be called', async () => {
+        test('Then the resp.end should be called and return mockResult', async () => {
             let mockResult = {
                 name: 'test',
             };
@@ -59,14 +59,14 @@ describe('Given a function', () => {
         });
     });
     describe('When we call getController with a wrong id', () => {
-        test('Then the resp.end should be called with a 404', async () => {
+        test('Then it should throw a 404 error', async () => {
             (mockModel.findById as jest.Mock).mockResolvedValue(null);
             await controller.getController(
                 req as Request,
                 resp as Response,
                 next as NextFunction
             );
-            expect(resp.status).toHaveBeenCalledWith(404);
+            expect(next).toBeCalled();
         });
     });
     describe('When we call postController', () => {
@@ -83,7 +83,6 @@ describe('Given a function', () => {
             expect(resp.end).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockNewItem));
-            expect(resp.status).toHaveBeenCalledWith(201);
         });
     });
     describe('When we call patchController', () => {

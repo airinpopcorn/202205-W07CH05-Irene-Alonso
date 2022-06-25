@@ -59,12 +59,12 @@ export class RobotController<T> {
             }
             const speed = (JSON.parse(req.body) as Partial<iRobot>)
                 .speed as number;
-            if (speed > 10 || speed < 0) {
+            if (speed && (speed > 10 || speed < 0)) {
                 throw new RangeError('Speed must be between 0 and 10');
             }
             const life = (JSON.parse(req.body) as Partial<iRobot>)
                 .life as number;
-            if (life > 10 || life < 10) {
+            if (life && (life > 10 || life < 10)) {
                 throw new RangeError('Life must be between 0 and 10');
             }
             const newItem = await this.model.findByIdAndUpdate(
