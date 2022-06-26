@@ -1,25 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { aMenuItems } from "../../interfaces/menu-items";
+import "./App.css";
+import { useDispatch } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import * as ac from "../../reducers/robot/actions.creators";
+import { HttpStoreRobots } from "../../services/http.store.robot";
+import { Layout } from "../Layout/Layout";
 
 function App() {
+  const dispatch = useDispatch();
+  const robots = useMemo(() => new HttpStoreRobots(), []);
+  // const navigate = useNavigate();
+
+  useEffect(() => {
+    robots.getAllRobots().then((robots) => {
+      dispatch(ac.loadRobot(robots));
+    });
+  }, [dispatch, robots]);
+
+  const HomePage = React.lazy(() => import("../../pages/home"));
+  const Details = React.lazy(() => import("../../pages/details"));
+
+  const options: aMenuItems = [
+    { path: "", label: "Home", page: <HomePage></HomePage> },
+    { path: "details", label: "Detalles", page: <Details></Details> },
+  ];
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Layout options={options}>
+          <React.Suspense>
+            <Routes>
+              {options.map((item) => (
+                <Route
+                  key={item.label}
+                  path={item.path}
+                  element={item.page}
+                ></Route>
+              ))}
+            </Routes>
+          </React.Suspense>
+        </Layout>
+      </BrowserRouter>
+    </>
   );
 }
 
