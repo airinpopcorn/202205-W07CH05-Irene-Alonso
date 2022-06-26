@@ -2,7 +2,7 @@ import { HttpStoreRobots } from "./http.store.robot";
 
 const resp = [
   {
-    id: "1",
+    _id: "1",
     name: "testName",
     image: "imageTest",
     speed: 2,
@@ -24,7 +24,7 @@ describe("Given HttpStoreRobots", () => {
   });
   describe("When we instantiate it and use getRobot method", () => {
     const mockRobot = {
-      id: "1",
+      _id: "1",
       name: "testName",
       image: "imageTest",
       speed: 2,
@@ -35,13 +35,13 @@ describe("Given HttpStoreRobots", () => {
       global.fetch = jest
         .fn()
         .mockResolvedValue({ json: jest.fn().mockResolvedValue(mockRobot) });
-      const result = await HttpStoreRobots.prototype.getRobot(mockRobot.id);
+      const result = await HttpStoreRobots.prototype.getRobot(mockRobot._id);
       expect(result).toEqual(mockRobot);
     });
   });
   describe("When we instantiate it and use setRobot method", () => {
     const mockRobot = {
-      id: "1",
+      _id: "1",
       name: "testName",
       image: "imageTest",
       speed: 2,
@@ -58,7 +58,7 @@ describe("Given HttpStoreRobots", () => {
   });
   describe("When we instantiate it and use updateRobot method", () => {
     const mockRobot = {
-      id: "1",
+      _id: "1",
       name: "testName",
       image: "imageTest",
       speed: 2,
@@ -81,7 +81,7 @@ describe("Given HttpStoreRobots", () => {
   });
   describe("When we instantiate it and use deleteRobot method", () => {
     const mockRobot = {
-      id: "1",
+      _id: "1",
       name: "testName",
       image: "imageTest",
       speed: 2,
@@ -92,7 +92,7 @@ describe("Given HttpStoreRobots", () => {
       global.fetch = jest.fn().mockResolvedValue({
         json: jest.fn().mockResolvedValue(mockRobot),
       });
-      const result = await HttpStoreRobots.prototype.deleteRobot(mockRobot.id);
+      const result = await HttpStoreRobots.prototype.deleteRobot(mockRobot._id);
       expect(result).toEqual(mockRobot);
     });
   });

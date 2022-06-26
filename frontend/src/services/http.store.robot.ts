@@ -12,7 +12,7 @@ export class HttpStoreRobots {
     });
   }
 
-  getRobot(id: iRobot["id"]): Promise<iRobot> {
+  getRobot(id: iRobot["_id"]): Promise<iRobot> {
     return fetch(this.apiUrl + String(id)).then((resp) => resp.json());
   }
 
@@ -27,7 +27,7 @@ export class HttpStoreRobots {
   }
 
   updateRobot(robot: iRobot): Promise<iRobot> {
-    return fetch(this.apiUrl + robot.id.toString(), {
+    return fetch(this.apiUrl + robot._id, {
       method: "PATCH",
       body: JSON.stringify(robot),
       headers: {
@@ -36,8 +36,8 @@ export class HttpStoreRobots {
     }).then((resp) => resp.json());
   }
 
-  deleteRobot(id: iRobot["id"]): Promise<number> {
-    return fetch(this.apiUrl + String(id), {
+  deleteRobot(id: iRobot["_id"]): Promise<number> {
+    return fetch(this.apiUrl + id, {
       method: "DELETE",
     }).then((resp) => resp.json());
   }

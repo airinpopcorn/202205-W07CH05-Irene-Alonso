@@ -6,7 +6,7 @@ import { robotReducer } from "./robot.reducer";
 describe("Given textil Reducer", () => {
   const mockRobots = [
     {
-      id: "1",
+      _id: "1",
       name: "testName",
       image: "imageTest",
       speed: 2,
@@ -14,7 +14,7 @@ describe("Given textil Reducer", () => {
       dateEst: "date",
     },
     {
-      id: "2",
+      _id: "2",
       name: "testName2",
       image: "imageTest2",
       speed: 3,
@@ -39,7 +39,7 @@ describe("Given textil Reducer", () => {
       //Arrange
       const initilState: Array<iRobot> = mockRobots;
       const actionTest = ac.addRobot({
-        id: "3",
+        _id: "3",
         name: "testRobot",
         image: "robot.jpg",
         speed: 10,
