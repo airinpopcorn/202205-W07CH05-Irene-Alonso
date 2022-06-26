@@ -7,12 +7,12 @@ export interface iState {
 }
 
 const preloadedState = {
-  robot: [],
+  robots: [] as Array<iRobot>,
 };
 
 export const store = configureStore({
   reducer: {
-    robot: robotReducer,
+    robots: robotReducer,
   },
   preloadedState,
 });

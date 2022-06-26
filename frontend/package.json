@@ -44,5 +44,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/index.tsx",
+      "<rootDir>/src/models/robot.ts",
+      "<rootDir>/src/interfaces/menu-items.ts",
+      "<rootDir>/src/reducers/robot/action.types.ts"
+    ]
   }
 }
