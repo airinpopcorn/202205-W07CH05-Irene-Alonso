@@ -4,11 +4,13 @@ import morgan from 'morgan';
 
 import homeRouter from './router/home.js';
 import { robotRouter } from './router/robot.js';
+import cors from 'cors';
 
 export const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 
 app.use('/', homeRouter);
 app.use('/robots', robotRouter);
