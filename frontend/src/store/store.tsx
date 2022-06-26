@@ -3,16 +3,16 @@ import { robotReducer } from "../reducers/robot/robot.reducer";
 import { configureStore } from "@reduxjs/toolkit";
 
 export interface iState {
-  textils: Array<iRobot>;
+  robots: Array<iRobot>;
 }
 
 const preloadedState = {
-  textil: [],
+  robot: [],
 };
 
 export const store = configureStore({
   reducer: {
-    textil: robotReducer,
+    robot: robotReducer,
   },
   preloadedState,
 });
