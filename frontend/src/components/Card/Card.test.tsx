@@ -1,15 +1,14 @@
 import { BrowserRouter } from "react-router-dom";
+import { screen } from "@testing-library/react";
 import { iRobot } from "../../models/robot";
 import { robotReducer } from "../../reducers/robot/robot.reducer";
 import { iState } from "../../store/store";
 import { CardRobot } from "./Card";
-import { render, screen } from "../../utils/test-utils";
+import { render } from "../../utils/test-utils";
+import userEvent from "@testing-library/user-event";
+import { HttpStoreRobots } from "../../services/http.store.robot";
 
-//Para hacer test el handler del botón borrar
-// jest.mock("react-redux", () => ({
-//   ...jest.requireActual("react-redux"),
-//   useDispatch: jest.fn(),
-// }));
+jest.mock("../../services/http.store.robot");
 
 describe("Given Card component", () => {
   const mockItem: iRobot = {
@@ -28,6 +27,9 @@ describe("Given Card component", () => {
       const preloadedState: iState = {
         robots: [] as Array<iRobot>,
       };
+      const mockDelete = jest.fn();
+      mockDelete.mockResolvedValue({});
+      HttpStoreRobots.prototype.deleteRobot = mockDelete;
       render(
         <BrowserRouter>
           <CardRobot robot={mockItem} />
@@ -37,6 +39,8 @@ describe("Given Card component", () => {
 
       const result = screen.getByText(/testRobot/i);
       expect(result).toBeInTheDocument();
+      userEvent.click(screen.getByText(/Borrar/i));
+      expect(mockDelete).toHaveBeenCalled();
     });
   });
 });
