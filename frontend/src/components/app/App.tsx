@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { aMenuItems } from "../../interfaces/menu-items";
 import "./App.css";
 import { useDispatch } from "react-redux";
@@ -11,14 +11,13 @@ import { Layout } from "../Layout/Layout";
 
 function App() {
   const dispatch = useDispatch();
-  const robots = useMemo(() => new HttpStoreRobots(), []);
-  // const navigate = useNavigate();
+  const apiRobots = useMemo(() => new HttpStoreRobots(), []);
 
   useEffect(() => {
-    robots.getAllRobots().then((robots) => {
+    apiRobots.getAllRobots().then((robots) => {
       dispatch(ac.loadRobot(robots));
     });
-  }, [dispatch, robots]);
+  }, [dispatch, apiRobots]);
 
   const HomePage = React.lazy(() => import("../../pages/home"));
   const Details = React.lazy(() => import("../../pages/details"));
@@ -29,21 +28,19 @@ function App() {
   ];
   return (
     <>
-      <BrowserRouter>
-        <Layout options={options}>
-          <React.Suspense>
-            <Routes>
-              {options.map((item) => (
-                <Route
-                  key={item.label}
-                  path={item.path}
-                  element={item.page}
-                ></Route>
-              ))}
-            </Routes>
-          </React.Suspense>
-        </Layout>
-      </BrowserRouter>
+      <Layout options={options}>
+        <React.Suspense>
+          <Routes>
+            {options.map((item) => (
+              <Route
+                key={item.label}
+                path={item.path}
+                element={item.page}
+              ></Route>
+            ))}
+          </Routes>
+        </React.Suspense>
+      </Layout>
     </>
   );
 }
