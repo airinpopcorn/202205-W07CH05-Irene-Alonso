@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Model } from 'mongoose';
 import { iRobot } from '../models/robot.model';
+import { User } from '../models/user.model';
 
 export class RobotController<T> {
     constructor(public model: Model<T>) {}
@@ -9,7 +10,13 @@ export class RobotController<T> {
     getAllController = async (req: Request, resp: Response) => {
         req;
         resp.setHeader('Content-type', 'application/json');
-        resp.end(JSON.stringify(await this.model.find()));
+        resp.end(
+            JSON.stringify(
+                await this.model.find().populate('owner', {
+                    robots: 0,
+                })
+            )
+        );
     };
 
     getController = async (
@@ -22,7 +29,11 @@ export class RobotController<T> {
                 throw new URIError('ID length not valid');
             }
             resp.setHeader('Content-type', 'application/json');
-            const result = await this.model.findById(req.params.id);
+            const result = await this.model
+                .findById(req.params.id)
+                .populate('owner', {
+                    robots: 0,
+                });
             if (result) {
                 resp.end(JSON.stringify(result));
             } else {
@@ -39,9 +50,15 @@ export class RobotController<T> {
         next: NextFunction
     ) => {
         try {
-            const newItem = await this.model.create(req.body);
+            const newRobot = await this.model.create(req.body);
+            const user = await User.findById(req.body.owner);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            user.robots = [...(user.robots as Array<iRobot>), newRobot.id];
+            user.save();
             resp.setHeader('Content-type', 'application/json');
-            resp.end(JSON.stringify(newItem));
+            resp.end(JSON.stringify(newRobot));
         } catch (error) {
             next(error);
         }
@@ -64,12 +81,34 @@ export class RobotController<T> {
             if (life && (life > 10 || life < 10)) {
                 throw new RangeError('Life must be between 0 and 10');
             }
-            const newItem = await this.model.findByIdAndUpdate(
+            const newRobot = await this.model.findByIdAndUpdate(
                 req.params.id,
                 req.body
             );
             resp.setHeader('Content-type', 'application/json');
-            resp.end(JSON.stringify(newItem));
+            resp.end(JSON.stringify(newRobot));
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    deletePatchController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        try {
+            if (req.params.id.length !== 24) {
+                throw new URIError('ID length not valid');
+            }
+            const deleteRobot = await this.model.findById(req.params.id);
+            const user = await User.findById(req.body.owner);
+            if (!user) {
+                throw new Error('User not found');
+            }
+            user.robots = user.robots?.filter((item) => item !== deleteRobot);
+            resp.setHeader('Content-type', 'application/json');
+            resp.end(JSON.stringify({}));
         } catch (error) {
             next(error);
         }

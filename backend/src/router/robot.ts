@@ -9,7 +9,7 @@ robotRouter.get('/', robotController.getAllController);
 
 robotRouter.get('/:id', robotController.getController);
 robotRouter.post('/', robotController.postController);
-
+robotRouter.patch('/delete/:id', robotController.deletePatchController);
 robotRouter.patch('/:id', robotController.patchController);
 
 robotRouter.delete('/:id', robotController.deleteController);

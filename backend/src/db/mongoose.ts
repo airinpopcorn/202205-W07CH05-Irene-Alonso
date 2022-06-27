@@ -6,3 +6,8 @@ export async function mongooseConnect() {
     const url = process.env.URL_MONGO;
     return mongoose.connect(url as string);
 }
+
+export interface iRelationField {
+    type: mongoose.Types.ObjectId;
+    ref: string;
+}

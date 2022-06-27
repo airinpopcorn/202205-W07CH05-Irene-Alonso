@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-labels */
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
+import { Robot } from '../models/robot.model';
 import { RobotController } from './robot.controller';
 
+Robot;
 describe('Given a function', () => {
     let controller: RobotController<{}>;
     let req: Partial<Request>;
@@ -18,6 +20,7 @@ describe('Given a function', () => {
             status: jest.fn(),
             end: jest.fn(),
         };
+        next: jest.fn();
     });
     const mockModel = {
         find: jest.fn(),
@@ -26,16 +29,16 @@ describe('Given a function', () => {
         findByIdAndUpdate: jest.fn(),
         findByIdAndDelete: jest.fn(),
     };
-    controller = new RobotController(
-        mockModel as unknown as mongoose.Model<{}>
-    );
+    controller = new RobotController(Robot) as any;
 
     describe('When we call getAllController', () => {
         test('Then the resp.end should be called', async () => {
             const mockResult = [{ test: 'test' }];
-            (mockModel.find as jest.Mock).mockResolvedValue(mockResult);
+            Robot.find = jest.fn().mockReturnValue({
+                populate: jest.fn().mockResolvedValue(mockResult),
+            });
             await controller.getAllController(req as Request, resp as Response);
-            expect(resp.end).toHaveBeenCalled();
+            expect(Robot.find).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
         });

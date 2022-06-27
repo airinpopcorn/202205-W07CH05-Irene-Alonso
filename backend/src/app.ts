@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import homeRouter from './router/home.js';
 import { robotRouter } from './router/robot.js';
 import cors from 'cors';
+import { userRouter } from './router/user.js';
 
 export const app = express();
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use('/', homeRouter);
 app.use('/robots', robotRouter);
+app.use('/users', userRouter);
 app.use((error: Error, req: Request, resp: Response, next: NextFunction) => {
     req;
     next;
