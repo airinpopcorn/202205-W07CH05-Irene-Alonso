@@ -37,7 +37,11 @@ describe('Given a function', () => {
             Robot.find = jest.fn().mockReturnValue({
                 populate: jest.fn().mockResolvedValue(mockResult),
             });
-            await controller.getAllController(req as Request, resp as Response);
+            await controller.getAllController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
             expect(Robot.find).toHaveBeenCalled();
             expect(resp.setHeader).toHaveBeenCalled();
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
