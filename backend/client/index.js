@@ -1,6 +1,10 @@
 (() => {
+    let user = localStorage.getItem('user')
+        ? JSON.parse(localStorage.getItem('user'))
+        : '';
     document.addEventListener('DOMContentLoaded', () => {
         const urlUser = 'http://localhost:3400/users/';
+        const urlRobot = 'http://localhost:3400/robots/';
         document
             .querySelector('.register form')
             .addEventListener('submit', (ev) => {
@@ -36,6 +40,30 @@
                     method: 'POST',
                     body: JSON.stringify(data),
                     headers: { 'Content-type': 'application/json' },
+                })
+                    .then((resp) => {
+                        console.log(resp);
+                        return resp.json();
+                    })
+                    .then((data) => {
+                        user = data;
+                        localStorage.setItem('user', JSON.stringify(user));
+                        console.log(user);
+                    });
+            });
+        document
+            .querySelector('.login [type="button"]')
+            .addEventListener('click', () => {
+                user = '';
+                localStorage.removeItem('user');
+            });
+        document
+            .querySelector('.robot button')
+            .addEventListener('click', () => {
+                fetch(urlRobot, {
+                    headers: {
+                        authorization: `Bearer ${user.token}`,
+                    },
                 })
                     .then((resp) => {
                         console.log(resp);

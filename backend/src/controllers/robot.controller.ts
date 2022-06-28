@@ -7,16 +7,24 @@ import { User } from '../models/user.model.js';
 export class RobotController<T> {
     constructor(public model: Model<T>) {}
 
-    getAllController = async (req: Request, resp: Response) => {
-        req;
-        resp.setHeader('Content-type', 'application/json');
-        resp.end(
-            JSON.stringify(
-                await this.model.find().populate('owner', {
-                    robots: 0,
-                })
-            )
-        );
+    getAllController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        try {
+            req;
+            resp.setHeader('Content-type', 'application/json');
+            resp.end(
+                JSON.stringify(
+                    await this.model.find().populate('owner', {
+                        robots: 0,
+                    })
+                )
+            );
+        } catch (error) {
+            next(error);
+        }
     };
 
     getController = async (
