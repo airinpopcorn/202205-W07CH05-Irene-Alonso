@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import { Model } from 'mongoose';
-
+import bcrypt from 'bcryptjs';
 export class UserController<T> {
     constructor(public model: Model<T>) {}
 
@@ -38,11 +38,14 @@ export class UserController<T> {
         next: NextFunction
     ) => {
         try {
-            const newItem = await this.model.create(req.body);
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+            const newUser = await this.model.create(req.body);
             resp.setHeader('Content-type', 'application/json');
-            resp.end(JSON.stringify(newItem));
+            resp.status(201);
+            resp.end(JSON.stringify(newUser));
         } catch (error) {
             next(error);
+            return;
         }
     };
 
@@ -64,6 +67,20 @@ export class UserController<T> {
         } catch (error) {
             next(error);
         }
+    };
+
+    loginController = async (
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        req.body.password;
+        const user = await this.model.findOne({ email: req.body.email });
+        if (!user) {
+            next();
+            return;
+        }
+        bcrypt.compare(req.body.password, user.password);
     };
 
     deleteController = async (

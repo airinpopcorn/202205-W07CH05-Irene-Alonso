@@ -10,7 +10,8 @@ export interface iUser {
 
 const userSchema = new mongoose.Schema({
     name: { type: mongoose.SchemaTypes.String, required: true },
-    email: mongoose.SchemaTypes.String,
+    email: { type: mongoose.SchemaTypes.String, required: true },
+    password: { type: mongoose.SchemaTypes.String, required: true },
     robots: [
         {
             type: mongoose.Types.ObjectId,
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema({
 userSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         delete returnedObject.__v;
+        delete returnedObject.password;
     },
 });
 
