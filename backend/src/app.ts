@@ -22,6 +22,8 @@ const errors: any = {
     ReferenceError: 404,
     URIError: 400,
     UserError: 404,
+    UserAuthorizationError: 401,
+    TokenError: 401,
 };
 
 app.use((error: Error, req: Request, resp: Response, next: NextFunction) => {
