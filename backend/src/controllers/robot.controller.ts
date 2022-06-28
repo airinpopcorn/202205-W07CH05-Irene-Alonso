@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import { Model } from 'mongoose';
-import { iRobot } from '../models/robot.model';
-import { User } from '../models/user.model';
+import { iRobot } from '../models/robot.model.js';
+import { User } from '../models/user.model.js';
 
 export class RobotController<T> {
     constructor(public model: Model<T>) {}
@@ -50,14 +50,24 @@ export class RobotController<T> {
         next: NextFunction
     ) => {
         try {
-            const newRobot = await this.model.create(req.body);
-            const user = await User.findById(req.body.owner);
-            if (!user) {
-                throw new Error('User not found');
+            let user;
+            try {
+                user = await User.findById(req.body.owner);
+            } catch (error) {
+                next(error);
+                return;
             }
+            if (!user) {
+                const error = new Error('User not found');
+                error.name = 'UserError';
+                throw error;
+            }
+            const newRobot = await this.model.create(req.body);
+
             user.robots = [...(user.robots as Array<iRobot>), newRobot.id];
             user.save();
             resp.setHeader('Content-type', 'application/json');
+            resp.status(201);
             resp.end(JSON.stringify(newRobot));
         } catch (error) {
             next(error);
