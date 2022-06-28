@@ -1,7 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { NextFunction, Request, Response } from 'express';
 import { Model } from 'mongoose';
-
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 export class UserController<T> {
     constructor(public model: Model<T>) {}
 
@@ -38,11 +41,14 @@ export class UserController<T> {
         next: NextFunction
     ) => {
         try {
-            const newItem = await this.model.create(req.body);
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+            const newUser = await this.model.create(req.body);
             resp.setHeader('Content-type', 'application/json');
-            resp.end(JSON.stringify(newItem));
+            resp.status(201);
+            resp.end(JSON.stringify(newUser));
         } catch (error) {
             next(error);
+            return;
         }
     };
 
@@ -60,10 +66,38 @@ export class UserController<T> {
                 req.body
             );
             resp.setHeader('Content-type', 'application/json');
+            resp.status(201);
             resp.end(JSON.stringify(newItem));
         } catch (error) {
             next(error);
         }
+    };
+
+    loginController = async (
+        //Esto es información dirigida al servidor
+        req: Request,
+        resp: Response,
+        next: NextFunction
+    ) => {
+        req.body.password;
+        const user: any = await this.model.findOne({ email: req.body.email });
+        const passwordCompare = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
+        if (!user || !passwordCompare) {
+            const error = new Error('Invalid user or password');
+            error.name = 'UserAuthorizationError';
+            next(error);
+            return;
+        }
+        const token = jwt.sign(
+            { id: user.id, name: user.name },
+            process.env.SECRET as string
+        );
+        resp.setHeader('Content-type', 'application/json');
+        resp.status(201);
+        resp.end(JSON.stringify({ token, id: user.id }));
     };
 
     deleteController = async (
