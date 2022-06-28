@@ -110,28 +110,6 @@ export class RobotController<T> {
         }
     };
 
-    deletePatchController = async (
-        req: Request,
-        resp: Response,
-        next: NextFunction
-    ) => {
-        try {
-            if (req.params.id.length !== 24) {
-                throw new URIError('ID length not valid');
-            }
-            const deleteRobot = await this.model.findById(req.params.id);
-            const user = await User.findById(req.body.owner);
-            if (!user) {
-                throw new Error('User not found');
-            }
-            user.robots = user.robots?.filter((item) => item !== deleteRobot);
-            resp.setHeader('Content-type', 'application/json');
-            resp.end(JSON.stringify({}));
-        } catch (error) {
-            next(error);
-        }
-    };
-
     deleteController = async (
         req: Request,
         resp: Response,
