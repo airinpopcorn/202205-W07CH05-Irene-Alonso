@@ -1,38 +1,38 @@
 [
     {
-        "_id": "62b7608def32e09c10b6582f",
         "name": "KVR-C",
         "image": "https://static.wikia.nocookie.net/lovedeathrobots/images/3/31/Boing_boing.jpg",
         "speed": 3,
         "life": 9,
-        "dateEst": "20/10/1993",
-        "__v": 0
+        "dateEst": "20/10/1993"
     },
     {
-        "_id": "62b760e1ef32e09c10b65831",
         "name": "Atlas",
         "image": "https://i1.theportalwiki.net/img/thumb/0/04/Atlas.png/175px-Atlas.png",
         "speed": 6,
         "life": 5,
-        "dateEst": "03/11/1989",
-        "__v": 0
+        "dateEst": "03/11/1989"
     },
     {
-        "_id": "62b76192ef32e09c10b65833",
         "name": "Wall-e",
         "image": "//upload.wikimedia.org/wikipedia/commons/thumb/8/8f/WALL-E_balloon_at_Shin_Kong_Cineplex_20080725a_%28cropped%29.jpg/200px-WALL-E_balloon_at_Shin_Kong_Cineplex_20080725a_%28cropped%29.jpg",
         "speed": 3,
         "life": 10,
-        "dateEst": "26/08/1990",
-        "__v": 0
+        "dateEst": "26/08/1990"
     },
     {
-        "_id": "62b761d6ef32e09c10b65835",
         "name": "Bender",
         "image": "//upload.wikimedia.org/wikipedia/en/thumb/a/a6/Bender_Rodriguez.png/220px-Bender_Rodriguez.png",
         "speed": 5,
         "life": 1,
-        "dateEst": "12/11/2005",
-        "__v": 0
+        "dateEst": "12/11/2005"
+    },
+    {
+        "name": "C3PO",
+        "image": "https://i.pinimg.com/564x/88/c0/81/88c081922e99d1f6cff3fd4d02dc44c3.jpg",
+        "speed": 4,
+        "life": 5,
+        "dateEst": "30/10/1990",
+        "owner": "62bb2f8465dc8e2e557c6c52"
     }
 ]

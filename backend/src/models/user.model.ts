@@ -1,3 +1,4 @@
+/*istanbul ignore file*/
 import mongoose from 'mongoose';
 import { iRelationField } from '../db/mongoose.js';
 
@@ -23,7 +24,7 @@ const userSchema = new mongoose.Schema({
 userSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         delete returnedObject.__v;
-        // delete returnedObject.password;
+        delete returnedObject.password;
     },
 });
 

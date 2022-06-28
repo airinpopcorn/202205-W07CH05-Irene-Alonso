@@ -19,14 +19,14 @@ const robotSchema = new mongoose.Schema({
     speed: { type: Number, min: 0, max: 10 },
     life: { type: Number, min: 0, max: 10 },
     dateEst: String,
-    owner: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: 'User',
-        },
-    ],
+    owner: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+    },
 });
 
 export const Robot = mongoose.model('Robot', robotSchema);
 
-await mongooseConnect();
+(async () => {
+    await mongooseConnect();
+})();
