@@ -81,10 +81,10 @@ export class UserController<T> {
     ) => {
         req.body.password;
         const user: any = await this.model.findOne({ email: req.body.email });
-        const passwordCompare = !(await bcrypt.compare(
+        const passwordCompare = await bcrypt.compare(
             req.body.password,
             user.password
-        ));
+        );
         if (!user || !passwordCompare) {
             const error = new Error('Invalid user or password');
             error.name = 'UserAuthorizationError';
