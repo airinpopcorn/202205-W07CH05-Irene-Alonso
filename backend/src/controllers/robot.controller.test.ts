@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-labels */
 import { NextFunction, Request, Response } from 'express';
 import { Robot } from '../models/robot.model';
+import { User } from '../models/user.model';
 import { RobotController } from './robot.controller';
 
-Robot;
+jest.mock('../models/user.model');
+
 describe('Given a function', () => {
     let controller: RobotController<{}>;
     let req: Partial<Request>;
@@ -22,14 +24,9 @@ describe('Given a function', () => {
         };
         next: jest.fn();
     });
-    const mockModel = {
-        find: jest.fn(),
-        findById: jest.fn(),
-        create: jest.fn(),
-        findByIdAndUpdate: jest.fn(),
-        findByIdAndDelete: jest.fn(),
-    };
+
     controller = new RobotController(Robot) as any;
+    User.findById = jest.fn();
 
     describe('When we call getAllController', () => {
         test('Then the resp.end should be called', async () => {
@@ -47,13 +44,29 @@ describe('Given a function', () => {
             expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
         });
     });
+    describe('When we call getAllController and there is an error calling the method', () => {
+        test('Then next should be called', async () => {
+            next = jest.fn();
+            Robot.find = jest.fn().mockReturnValue({
+                populate: jest.fn().mockRejectedValue(null),
+            });
+            await controller.getAllController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toHaveBeenCalled();
+        });
+    });
 
     describe('When we call getController', () => {
         test('Then the resp.end should be called and return mockResult', async () => {
             let mockResult = {
                 name: 'test',
             };
-            (mockModel.findById as jest.Mock).mockResolvedValue(mockResult);
+            Robot.findById = jest.fn().mockReturnValue({
+                populate: jest.fn().mockResolvedValue(mockResult),
+            });
 
             await controller.getController(
                 req as Request,
@@ -68,7 +81,9 @@ describe('Given a function', () => {
     describe('When we call getController with a wrong id', () => {
         test('Then next should be called with an error', async () => {
             next = jest.fn();
-            (mockModel.findById as jest.Mock).mockResolvedValue(null);
+            Robot.findById = jest.fn().mockReturnValue({
+                populate: jest.fn().mockResolvedValue(null),
+            });
             await controller.getController(
                 req as Request,
                 resp as Response,
@@ -94,7 +109,11 @@ describe('Given a function', () => {
             let mockNewItem = {
                 name: 'test',
             };
-            (mockModel.create as jest.Mock).mockResolvedValue(mockNewItem);
+            (User.findById as jest.Mock).mockResolvedValue({
+                robots: '',
+                save: jest.fn(),
+            });
+            Robot.create = jest.fn().mockResolvedValue(mockNewItem);
             await controller.postController(
                 req as Request,
                 resp as Response,
@@ -106,21 +125,45 @@ describe('Given a function', () => {
         });
         test('Then the next function should be called', async () => {
             next = jest.fn();
-            (mockModel.create as jest.Mock).mockRejectedValue(null);
+            Robot.create = jest.fn().mockRejectedValue(null);
             await controller.postController(
                 req as Request,
                 resp as Response,
                 next as NextFunction
             );
-            expect(next).toHaveBeenCalledWith(null);
+            expect(next).toHaveBeenCalled();
+        });
+    });
+    describe('When we call postController with no user', () => {
+        test('Then the next should be called', async () => {
+            let mockNewItem = {
+                name: 'test',
+            };
+            (User.findById as jest.Mock).mockResolvedValue(null);
+            Robot.create = jest.fn().mockResolvedValue(mockNewItem);
+            await controller.postController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toHaveBeenCalled();
+        });
+    });
+    describe('When we call postController with a wrong user', () => {
+        test('Then the next should be called', async () => {
+            (User.findById as jest.Mock).mockRejectedValue(null);
+            await controller.postController(
+                req as Request,
+                resp as Response,
+                next as NextFunction
+            );
+            expect(next).toHaveBeenCalled();
         });
     });
     describe('When we call patchController', () => {
         test('Then the resp.end should be called', async () => {
             let mockResult = { test: 'test' };
-            (mockModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(
-                mockResult
-            );
+            Robot.findByIdAndUpdate = jest.fn().mockResolvedValue(mockResult);
             await controller.patchController(
                 req as Request,
                 resp as Response,
@@ -171,7 +214,7 @@ describe('Given a function', () => {
     });
     describe('When we call deleteController', () => {
         test('Then the resp.end should be called', async () => {
-            (mockModel.findByIdAndDelete as jest.Mock).mockResolvedValue({});
+            Robot.findByIdAndDelete = jest.fn().mockResolvedValue({});
             await controller.deleteController(
                 req as Request,
                 resp as Response,
